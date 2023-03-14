@@ -1,0 +1,26 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+	<div>
+		<img class="img-fluid" src="{{map.thumbnailUrl}}"/>
+		<h2 data-color>{{map.name}}</h2>
+		<table class="table table-sm">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Name</th>
+					<th scope="col">Time</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for rec in recs %}
+					<tr>
+						<td>{{rec.rank}}</td>
+						<td>{{rec.name}}</td>
+						<td>{{rec.time}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
