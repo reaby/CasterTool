@@ -1,6 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap");
+
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Montserrat", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
 }
 
 .container {
@@ -8,5 +16,5 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
 }
