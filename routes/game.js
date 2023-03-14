@@ -55,33 +55,39 @@ export default function (api) {
     }
   });
 
-  router.get('/map', async (req, res, next) => {
-    if (!req.query["uid"]) {
-      res.end("uid missing.");
-      return;
-    }
+  router.get('/top1', async (req, res, next) => {
+    try {
+      const gbx = new GbxClient();
+      await gbx.connect("127.0.0.1", 5000);
+      await gbx.call("Authenticate", "SuperAdmin", "SuperAdmin");
+      const mapinfo = await gbx.call("GetCurrentMapInfo");
+      await gbx.disconnect();
 
-    const map = await api.getMapInfo(req.query["uid"]);
-    if (!map) {
-      res.end("error.");
-      return;
-    }
+      const map = await api.getMapInfo(mapinfo.UId);
+      if (!map) {
+        res.end("error.");
+        return;
+      }
 
-    const leaderboard = await api.getMapLeaderboards(req.query["uid"], 10);
-    const compResult = [];
-    const fetchNames = [];
-    for (const info of leaderboard.tops[0].top) {
-      compResult.push(info);
-      fetchNames.push(info.accountId);
-    }
-    const names = await getNames(fetchNames);
-    let records = [];
+      const leaderboard = await api.getMapLeaderboards(mapinfo.UId, 1);
+      const compResult = [];
+      const fetchNames = [];
+      for (const info of leaderboard.tops[0].top) {
+        compResult.push(info);
+        fetchNames.push(info.accountId);
+      }
+      const names = await getNames(fetchNames);
+      let rec = {name: "", time: ""};
 
-    for (const info of compResult) {
-      records.push({ rank: info.position, name: names[info.accountId], time: formatTime(info.score) });
-    }
+      for (const info of compResult) {
+        rec.name = names[info.accountId];
+        rec.time = formatTime(info.score);
+      }
 
-    res.render('map', { map: map, recs: records });
+      res.render('top1', { map: map, rec: rec });
+    } catch (e) {
+      res.end("Couldn't connect local TM instance.");
+    }
   });
 
   return router;
