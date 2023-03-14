@@ -3,17 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www.js"
+    "start": "node ./app.js"
   },
   "type": "module",
   "dependencies": {
-    "@evotm/gbxclient": "^1.2.1",
+    "@evotm/gbxclient": "^1.3.0",
+    "chalk": "^5.2.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "^4.18.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "node-fetch": "^3.3.1",
+    "socket.io": "^4.6.1",
+    "supports-color": "^9.3.1",
     "twig": "~0.10.3"
   }
 }
