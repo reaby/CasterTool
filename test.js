@@ -18,15 +18,6 @@ async function getNames(list) {
 
 (async () => {
     const result = await api.getCompLeaderboard(5108, 100);
-    const gbx = new GbxClient();
-    await gbx.connect("127.0.0.1", 5000);
-    gbx.call("GetPlayerList", 255, 0);
-
-
-    // gbx.call("GetPlayerInfo", "LOGIN")
-
-
     console.log(result);
-
 })();
 
