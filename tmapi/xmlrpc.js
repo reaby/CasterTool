@@ -3,18 +3,22 @@ import { Socket } from 'socket.io';
 import cli from '../utils/cli.js';
 import chalk from 'chalk';
 import PlayerManager from './playermanager.js';
+import Events from '../modules/events.js';
+import ApiCache from '../modules/apiCache.js';
 
 export default class XmlRPC {
 
     /**
     *
-    * @param {Socket} io
+    * @param {ApiCache} apiCache
+    * @param {Events} events
     */
-    constructor(io) {
-        this.io = io;
+    constructor(apiCache, events) {
         this.playerManager = null;
         this.currentPlayer = {};
         this.spectatorUuid = "";
+        this.apicache = apiCache;
+        this.events = events;
         this.map = {};
         this.connect();
     }
@@ -23,11 +27,15 @@ export default class XmlRPC {
         const info = await this.gbx.call("GetSystemInfo");
         this.currentPlayer = await this.playerManager?.getPlayer(info.ServerLogin);
         try {
-        this.map = await this.gbx.call("GetCurrentMapInfo");
+        const map = await this.gbx.call("GetCurrentMapInfo");
+        this.map = map;
+        await this.apicache.syncMapFromServerData(map);
         } catch (e) {
             cli("Couldn't sync current map of game", "game");
         }
-        await this.playerManager?.syncPlayers();
+        const players = await this.playerManager?.syncPlayers();
+        await this.apicache.syncPlayersFromServerData(players);
+        this.events.emit("sync");
     }
 
     async connect() {
@@ -72,7 +80,7 @@ export default class XmlRPC {
             const player = await playerManager.onPlayerInfoChanged(data[0]);
             if (player.login == this.currentPlayer.login) {
                 const spec = playerManager.getPlayerById(player.spectatorTarget);
-                cli("i'm speccing: " + spec.nick);
+                this.events.emit("specTargetChanged", spec);
             }
         });
 
@@ -81,11 +89,14 @@ export default class XmlRPC {
         });
 
         gbx.on("ManiaPlanet.BeginMap", async (data) => {
-            this.map = data[0];
+            const map = data[0];
+            this.map = map;
+            await this.sync();
         });
 
         gbx.on("callback", (name, data) => {
-            console.log(name, data);
+            cli(chalk.bold.cyan(name), "game");
+            console.log(data);
         });
 
         await this.gbx.connect("127.0.0.1", 5000);

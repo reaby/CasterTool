@@ -1,5 +1,6 @@
 import { GbxClient } from "@evotm/gbxclient";
 import { LoginToUuid } from "./uuid.js";
+import cli from "../utils/cli.js";
 
 export class Player {
 
@@ -17,8 +18,8 @@ export class Player {
     this.uuid = LoginToUuid(data.Login);
     this.nick = data.NickName;
     this.id = data.PlayerId;
-    this.isSpectator = data.SpectatorStatus !== 0;
-    this.spectatorTarget = parseInt(data.SpectatorStatus / 10000);
+    this.isSpectator = data.SpectatorStatus != 0;
+    this.spectatorTarget = Math.floor(data.SpectatorStatus / 10000);
   }
 }
 
@@ -30,54 +31,53 @@ export default class PlayerManager {
    */
   constructor(gbx) {
     this.gbx = gbx;
-    this.players = [];
+    this.players = {};
   }
 
   async onPlayerDisconnect(login) {
-    let index = 0;
-    for (const player of this.players) {
-      if (player.login == login) break;
-      index += 1;
-    }
-    this.players.splice(index, 1);
+    delete this.players[login];
   }
 
 
   async getPlayerbyNick(nickname) {
-    for (const player of this.players) {
+    for (const i of this.players) {
+      const player = this.players[i];
       if (player.nick == nickname) return player;
     }
     return null;
   }
 
   async getPlayer(login) {
-    for (const player of this.players) {
-      if (player.login == login) return player;
+    for (const Login in this.players) {
+      if (Login == login) return this.players[Login];
     }
 
     const player = new Player();
     const data = await this.gbx.call("GetPlayerInfo", login);
     player.syncFromPlayerInfo(data);
-    this.players.push(player);
+    this.players[login] = player;
     return player;
   }
 
   reset() {
-    this.players = [];
+    this.players = {};
   }
 
   async syncPlayers() {
     this.reset();
     const players = await this.gbx.call("GetPlayerList", 255,0);
+    cli("Syncing players...", "game");
     for(const i in players) {
       const player = new Player();
       player.syncFromPlayerInfo(players[i]);
-      this.players.push(player);
+      this.players[player.login] = player;
     }
+    return this.players;
   }
 
   getPlayerById(id) {
-    for(const player of this.players) {
+    for(const i in this.players) {
+      const player = this.players[i];
       if (player.id == id) return player;
     }
     return new Player();
@@ -85,11 +85,8 @@ export default class PlayerManager {
 
   async onPlayerInfoChanged(data) {
     const player = await this.getPlayer(data.Login);
-    const orig_login = player.login;
     player.syncFromPlayerInfo(data);
-    if (orig_login == "") {
-      this.players.push(player);
-    }
+    this.players[player.login] = player;
     return player;
   }
 }

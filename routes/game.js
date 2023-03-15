@@ -90,5 +90,9 @@ export default function (api) {
     }
   });
 
+  router.get('/dashboard', async (req, res, next) => {
+    res.render("dashboard");
+  });
+
   return router;
 };

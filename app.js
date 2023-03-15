@@ -10,13 +10,20 @@ import Api from './tmapi/api.js';
 import { Server } from 'socket.io';
 import XmlRPC from './tmapi/xmlrpc.js';
 import cli from './utils/cli.js';
+import ApiCache from './modules/apiCache.js';
+import Websocket from './routes/websocket.js';
+import Events from './modules/events.js';
 
 const app = express();
 const credentials = Buffer.from(config.user + ":" + config.pass).toString('base64');
 const tmApi = new Api(credentials);
 const server = http.createServer(app);
 const io = new Server(server);
-const gbx = new XmlRPC(io);
+const events = new Events();
+
+const cache = new ApiCache(tmApi);
+const gbx = new XmlRPC(cache, events);
+const webSocket = new Websocket(gbx, cache, io, events);
 
 // view engine setup
 app.set('views', './views');

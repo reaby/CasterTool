@@ -1,0 +1,43 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+	<h1 id="mapName">none</h1>
+	<h2>Spectating: <span id="spect">n/a</span></h2>
+	<pre id="records"></pre>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+		let records = {};
+
+		socket.on("front.Map", (data) =>{
+			const elemName = document.querySelector("#mapName");
+			if (data.name) {
+				elemName.innerHTML = MPStyle.Parser.toHTML(data.name);
+			} else {
+				elemName.innerHTML = "n/a";
+			}
+			console.log(data);
+		});
+
+		socket.on("front.SpectChange", (player) => {
+			const elem = document.querySelector("#spect");
+			let out = "n/a";
+			if (player.nick) {
+				out = player.nick;
+			}
+			elem.innerHTML = out;
+		});
+
+		socket.on("front.Records", (data) =>{
+			const elem = document.querySelector("#records");
+			let out = "";
+			for(let i in data) {
+				const record = data[i];
+				out += `${record.rank}. ${record.time}  ${record.nick}\n`;
+			}
+			elem.innerHTML = out;
+		});
+
+	</script>
+{% endblock %}

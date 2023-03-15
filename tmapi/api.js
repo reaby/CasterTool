@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import fetch from 'node-fetch';
+import cli from '../utils/cli.js';
 
 const toolName = "CasterTool / petri.jarvisalo@gmail.com";
 const commonHeader = {
@@ -57,6 +58,7 @@ export default class TrackmaniaApi {
 
     async fetchUrl(url, token, method = "GET") {
         const response = await fetch(url, { method: method, headers: { "Authorization": `nadeo_v1 t=${token}` } });
+        cli(url, "ApiFetch");
         return response.json();
     }
 
