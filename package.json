@@ -18,5 +18,8 @@
     "socket.io": "^4.6.1",
     "supports-color": "^9.3.1",
     "twig": "~0.10.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.36.0"
   }
 }

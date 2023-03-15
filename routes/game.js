@@ -94,5 +94,9 @@ export default function (api) {
     res.render("dashboard");
   });
 
+  router.get('/tmwt', async (req, res, next) => {
+    res.render("tmwt");
+  });
+
   return router;
 };
