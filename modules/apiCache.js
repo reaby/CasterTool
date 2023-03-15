@@ -34,6 +34,14 @@ export default class ApiCache {
         this.players = {};
     }
 
+    resetRecords() {
+        this.records = {};
+    }
+
+    resetMap() {
+        this.map = EmptyMap;
+    }
+
     async getNames(list) {
         const namesResult = await this.api.getDisplayNames(list);
         const out = {};
@@ -78,7 +86,7 @@ export default class ApiCache {
      * @param {Player} player
      */
     getPB(player) {
-        let out = {nick: player.nick, time: "-:--.---" };
+        let out = {id: player.id, nick: player.nick, time: "-:--.---" };
         if (player.uuid !== "" && this.records[player.uuid]) {
             const record = this.records[player.uuid];
             out.time = record.time;
@@ -137,9 +145,5 @@ export default class ApiCache {
                 cli("Map not found for world records.", "Error");
             }
         }
-    }
-
-    resetMap() {
-        this.map = "";
     }
 }

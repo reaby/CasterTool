@@ -6,35 +6,41 @@
 		position: absolute;
 		background: rgba(0,0,0,0.5);
 		padding: 0.5vw;
+		color: white;
 	}
 
 	#mapInfo {
-	 	top: 1vh;
+	 	top: 5vh;
 		right: 1vw;
 		text-align: right;
+		display: none;
+		color: white;
 	}
 
 	#spectInfo {
-	 	bottom: 6vh;
+	 	bottom: 9vh;
 		left: 50vw;
 		width: 30%;
 		margin-left: -15%;
 		text-align: center;
 		position: absolute;
 		padding: 0.5vw;
+		display: none;
+	}
+
+	#wrInfo {
+		left: 1vw;
+		top:  10vh;
+		display: none;
 	}
 
 	#spect {
 		font-weight: bold;
 		/* font-style: italic; */
-		font-size: 1.5vw;
+		font-size: 1.75vw;
+		color: white;
 	}
 
-
-	#wrInfo {
-		left: 1vw;
-		top:  10vh;
-	}
 
 	#mapName, #wr {
 		font-size: 1.5vw;
@@ -87,7 +93,7 @@
 			const elem = document.querySelector("#spect");
 			const info = document.querySelector("#spectInfo");
 			let out = "";
-			if (player.nick) {
+			if (player.nick && player.id != 0) {
 				info.style.display = "block";
 				out = "PB " + player.time;
 			} else {
@@ -98,6 +104,7 @@
 
 		socket.on("front.Records", (data) =>{
 			const elem = document.querySelector("#wr");
+			const info = document.querySelector("#wrInfo");
 			let out = "";
 			for(let i in data) {
 				const record = data[i];
@@ -105,6 +112,11 @@
 				out = `${record.time}  ${record.nick}`;
 				break;
 				}
+			}
+			if (out != "") {
+				info.style.display = "block";
+			} else {
+				info.style.display = "none";
 			}
 			elem.innerHTML = out;
 		});

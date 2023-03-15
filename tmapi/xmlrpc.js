@@ -105,6 +105,7 @@ export default class XmlRPC {
         gbx.on("ManiaPlanet.EndMap", async () => {
             this.map = {};
             this.apicache.resetMap();
+            this.apicache.resetRecords();
             this.apicache.spectatorTarget = new Player();
             cli("Clear map and spectator data", "game");
             this.events.emit("sync");  /** @see {Websocket} **/
@@ -113,6 +114,7 @@ export default class XmlRPC {
         gbx.on("ManiaPlanet.EndMatch", async () => {
             this.map = {};
             this.apicache.resetMap();
+            this.apicache.resetRecords();
             this.apicache.spectatorTarget = new Player();
             cli("Clear map and spectator data", "game");
             this.events.emit("sync");  /** @see {Websocket} **/
