@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import fetch from 'node-fetch';
 import cli from '../utils/cli.js';
+import chalk from 'chalk';
 
 const toolName = "CasterTool / petri.jarvisalo@gmail.com";
 const commonHeader = {
@@ -59,7 +60,22 @@ export default class TrackmaniaApi {
     async fetchUrl(url, token, method = "GET") {
         const response = await fetch(url, { method: method, headers: { "Authorization": `nadeo_v1 t=${token}` } });
         cli(url, "ApiFetch");
-        return response.json();
+        const json = response.json();
+        if (json.code) {
+            cli(chalk.bold.red(json.message), "ApiError");
+            return {};
+        }
+        return json;
+    }
+
+    /**
+     * @param {string} mapIdList
+     * @param {string} accountIdList
+     * @returns
+     */
+    async getMapRecords(mapIdList, accountIdList) {
+        const token = await this.getToken(AUDIENCE_NADEOSERVICES);
+        return await this.fetchUrl(`https://prod.trackmania.core.nadeo.online/mapRecords/?accountIdList=${accountIdList}&mapIdList=${mapIdList}`, token);
     }
 
     async getCompLeaderboard(competitionId, length) {
@@ -72,16 +88,33 @@ export default class TrackmaniaApi {
         return await this.fetchUrl(`https://competition.trackmania.nadeo.club/api/competitions/${competitionId}`, token);
     }
 
+    /**
+     *
+     * @param {string} mapUid
+     * @returns
+     */
     async getMapInfo(mapUid) {
         const token = await this.getToken(AUDIENCE_LIVESERVICES);
         return await this.fetchUrl(`https://live-services.trackmania.nadeo.live/api/token/map/${mapUid}`, token);
     }
 
+    /**
+     *
+     * @param {string[]} list
+     * @returns
+     */
     async getDisplayNames(list = []) {
         const token = await this.getToken(AUDIENCE_NADEOSERVICES);
         return await this.fetchUrl(`https://prod.trackmania.core.nadeo.online/accounts/displayNames/?accountIdList=${list.join(",")}`, token);
     }
 
+    /**
+     *
+     * @param {string} mapUid
+     * @param {number} length < 100
+     * @param {number} offset
+     * @returns
+     */
     async getMapLeaderboards(mapUid, length = 100, offset = 0) {
         const token = await this.getToken(AUDIENCE_LIVESERVICES);
         return await this.fetchUrl(`https://live-services.trackmania.nadeo.live/api/token/leaderboard/group/Personal_Best/map/${mapUid}/top?length=${length}&onlyWorld=true&offset=${offset}`, token);

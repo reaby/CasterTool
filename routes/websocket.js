@@ -23,7 +23,7 @@ export default class Websocket {
         });
 
         events.on("specTargetChanged", (player) => {
-            this.io.emit("front.SpectChange", player);
+            this.io.emit("front.SpectChange", this.cache.getPB(player));
         });
 
         io.on("connect", async (socket) => {
@@ -31,7 +31,7 @@ export default class Websocket {
             this.syncFront();
 
             socket.on("back.getRecords", () => {
-                socket.send("front.records", this.cache.records);
+                socket.send("front.Records", this.cache.records);
             });
 
             socket.on("back.getMap", () => {
@@ -41,9 +41,9 @@ export default class Websocket {
         });
     }
 
-
     syncFront() {
         this.io.emit("front.Map", this.cache.map);
         this.io.emit("front.Records", this.cache.records);
+        this.io.emit("front.SpectChange", this.cache.getPB(this.cache.spectatorTarget));
     }
 }

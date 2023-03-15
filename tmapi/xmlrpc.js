@@ -1,10 +1,9 @@
 import { GbxClient } from '@evotm/gbxclient';
-import { Socket } from 'socket.io';
 import cli from '../utils/cli.js';
 import chalk from 'chalk';
-import PlayerManager from './playermanager.js';
+import PlayerManager, { Player } from './playermanager.js';
 import Events from '../modules/events.js';
-import ApiCache from '../modules/apiCache.js';
+import ApiCache, { EmptyMap } from '../modules/apiCache.js';
 
 export default class XmlRPC {
 
@@ -15,27 +14,33 @@ export default class XmlRPC {
     */
     constructor(apiCache, events) {
         this.playerManager = null;
-        this.currentPlayer = {};
-        this.spectatorUuid = "";
+        this.currentPlayer = new Player();
         this.apicache = apiCache;
+        this.apicache.spectatorTarget = new Player();
         this.events = events;
         this.map = {};
         this.connect();
     }
 
     async sync() {
+        cli("Syncing server status...", "game");
         const info = await this.gbx.call("GetSystemInfo");
         this.currentPlayer = await this.playerManager?.getPlayer(info.ServerLogin);
         try {
-        const map = await this.gbx.call("GetCurrentMapInfo");
-        this.map = map;
-        await this.apicache.syncMapFromServerData(map);
+            const map = await this.gbx.call("GetCurrentMapInfo");
+            this.map = map;
+
+            const players = await this.playerManager?.syncPlayers();
+
+            this.apicache.resetPlayers();
+            this.apicache.syncPlayersFromServerData(players);
+
+            await this.apicache.syncMapFromServerData(map);
         } catch (e) {
             cli("Couldn't sync current map of game", "game");
         }
-        const players = await this.playerManager?.syncPlayers();
-        await this.apicache.syncPlayersFromServerData(players);
-        this.events.emit("sync");
+
+        this.events.emit("sync");  /** @see {Websocket} **/
     }
 
     async connect() {
@@ -52,11 +57,11 @@ export default class XmlRPC {
             await gbx.call("SetApiVersion", "2013-04-16");
             await gbx.call("EnableCallbacks", true);
             try {
-              await gbx.call("Authenticate", "SuperAdmin", "SuperAdmin");
-              await this.sync();
+                await gbx.call("Authenticate", "SuperAdmin", "SuperAdmin");
+                await this.sync();
             } catch (e) {
-             cli("Authenticate to server failed.", "game");
-             console.log(e);
+                cli("Authenticate to server failed.", "game");
+                console.log(e);
             }
         });
 
@@ -70,17 +75,20 @@ export default class XmlRPC {
 
         gbx.on("ManiaPlanet.PlayerDisconnect", async (data) => {
             await playerManager.onPlayerDisconnect(data[0]);
-          });
+        });
 
         gbx.on("ManiaPlanet.PlayerConnect", async (data) => {
-            // await playerManager.onPlayerConnect(event[0]);   // no need, as the player status changes...
+            // await playerManager.onPlayerConnect(data[0]);   // no need, as the player status changes...
         });
 
         gbx.on("ManiaPlanet.PlayerInfoChanged", async (data) => {
-            const player = await playerManager.onPlayerInfoChanged(data[0]);
-            if (player.login == this.currentPlayer.login) {
-                const spec = playerManager.getPlayerById(player.spectatorTarget);
-                this.events.emit("specTargetChanged", spec);
+            if (data[0]) {
+                const player = await playerManager.onPlayerInfoChanged(data[0]);
+                if (player.login == this.currentPlayer.login) {
+                    const spec = playerManager.getPlayerById(player.spectatorTarget);
+                    this.apicache.spectatorTarget = spec;
+                    this.events.emit("specTargetChanged", spec); /** @see {Websocket} **/
+                }
             }
         });
 
@@ -94,9 +102,25 @@ export default class XmlRPC {
             await this.sync();
         });
 
+        gbx.on("ManiaPlanet.EndMap", async () => {
+            this.map = {};
+            this.apicache.resetMap();
+            this.apicache.spectatorTarget = new Player();
+            cli("Clear map and spectator data", "game");
+            this.events.emit("sync");  /** @see {Websocket} **/
+        });
+
+        gbx.on("ManiaPlanet.EndMatch", async () => {
+            this.map = {};
+            this.apicache.resetMap();
+            this.apicache.spectatorTarget = new Player();
+            cli("Clear map and spectator data", "game");
+            this.events.emit("sync");  /** @see {Websocket} **/
+        });
+
         gbx.on("callback", (name, data) => {
-            cli(chalk.bold.cyan(name), "game");
-            console.log(data);
+            //cli(chalk.bold.cyan(name), "game");
+            // console.log(data);
         });
 
         await this.gbx.connect("127.0.0.1", 5000);

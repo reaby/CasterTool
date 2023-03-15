@@ -66,7 +66,6 @@ export default class PlayerManager {
   async syncPlayers() {
     this.reset();
     const players = await this.gbx.call("GetPlayerList", 255,0);
-    cli("Syncing players...", "game");
     for(const i in players) {
       const player = new Player();
       player.syncFromPlayerInfo(players[i]);

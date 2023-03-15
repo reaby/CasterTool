@@ -1,6 +1,10 @@
+import chalk from "chalk";
 import TrackmaniaApi from "../tmapi/api.js";
+import { Player } from "../tmapi/playermanager.js";
 import cli from "../utils/cli.js";
 import formatTime from "../utils/time.js";
+
+export const EmptyMap = { uid: "", mapId: "", name: "", author: "", thumbnailUrl: "", fileUrl: "" };
 
 export default class ApiCache {
     /**
@@ -9,8 +13,10 @@ export default class ApiCache {
      */
     constructor(api) {
         this.api = api;
-
-        this.map = {};
+        /**
+         * map = { uid: "", mapId: "", name: "", author: "", thumbnailUrl: "", fileUrl: "" };
+         */
+        this.map = EmptyMap;
 
         /**
          * structure is players[uid] = login
@@ -21,7 +27,7 @@ export default class ApiCache {
          * record[rank] = {rank: 1, nick: "nickname", uuid: "uuid", score: 12345, time: "0:12.345" }
          */
         this.records = {};
-
+        this.spectatorTarget = new Player();
     }
 
     resetPlayers() {
@@ -57,7 +63,7 @@ export default class ApiCache {
         return this.players;
     }
 
-    async syncPlayersFromServerData(players) {
+    syncPlayersFromServerData(players) {
         const out = {};
         for (const i in players) {
             const player = players[i];
@@ -67,11 +73,42 @@ export default class ApiCache {
         return this.players;
     }
 
+    /**
+     *
+     * @param {Player} player
+     */
+    getPB(player) {
+        let out = {nick: player.nick, time: "-:--.---" };
+        if (player.uuid !== "" && this.records[player.uuid]) {
+            const record = this.records[player.uuid];
+            out.time = record.time;
+        }
+        return out;
+    }
+
+    async fetchCurrentMapRecords(playerList = []) {
+        if (!this.map.mapId) {
+            return;
+        }
+        if (playerList.length > 0) {
+            const mapRecords = await this.api.getMapRecords(this.map.mapId, playerList.join(","));
+            const out = {};
+            for (const i in mapRecords) {
+                const record = mapRecords[i];
+                if (record.code) continue;
+                out[record.accountId] = { rank: -1, nick: this.players[record.accountId], uuid: record.accountId, score: record.recordScore.time, time: formatTime(record.recordScore.time) }
+            }
+            return out;
+        } else {
+            cli(chalk.red("Players list empty"), "Error");
+        }
+        return {};
+    }
+
     async syncMapFromServerData(map) {
         if (map.UId && this.map.uid !== map.UId) {
             const apimap = await this.api.getMapInfo(map.UId);
-
-            if (!apimap.code) {
+            if (apimap) {
                 this.map = { uid: map.UId, mapId: apimap.mapId, name: map.Name, author: map.AuthorNickname, thumbnailUrl: apimap.thumbnailUrl, fileUrl: apimap.fileUrl };
                 cli("Fetching leaderboards for map: " + map.Name, "Api");
                 const leaderboard = await this.api.getMapLeaderboards(map.UId, 50);
@@ -82,13 +119,20 @@ export default class ApiCache {
                     fetchNames.push(info.accountId);
                 }
                 const names = await this.getNames(fetchNames);
-                let records = {};
+                let outRecords = {};
                 for (const info of compResult) {
-                    records[info.position] = { rank: info.position, nick: names[info.accountId], uuid: info.accountId, score: info.score, time: formatTime(info.score) };
+                    outRecords[info.accountId] = { rank: info.position, nick: names[info.accountId], uuid: info.accountId, score: info.score, time: formatTime(info.score) };
                 }
-                this.records = records;
+                this.records = outRecords;
+                const list = Object.keys(this.players);
+                const recs = await this.fetchCurrentMapRecords(list);
+                for (const uid in recs) {
+                    if (!this.records[uid]) {
+                        this.records[uid] = recs[uid];
+                    }
+                }
             } else {
-                this.map = { uid: "", mapId: "", name: "", author: "", thumbnailUrl: "", fileUrl: "" };
+                this.map = EmptyMap;
                 this.records = {};
                 cli("Map not found for world records.", "Error");
             }
