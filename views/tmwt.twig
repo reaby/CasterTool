@@ -4,16 +4,9 @@
 	<style>
 	.widget {
 		position: absolute;
-		background: rgba(0,0,0,0.5);
+		background: rgba(7,0,77,0.9);
+		border-left: 3px solid #ca0c7d;
 		padding: 0.5vw;
-		color: white;
-	}
-
-	#mapInfo {
-	 	top: 5vh;
-		right: 1vw;
-		text-align: right;
-		display: none;
 		color: white;
 	}
 
@@ -29,8 +22,8 @@
 	}
 
 	#wrInfo {
-		left: 1vw;
-		top:  10vh;
+		left: 0.6vw;
+		top:  2.5vh;
 		display: none;
 	}
 
@@ -56,17 +49,12 @@
 
 	</style>
 
-	<div id="mapInfo" class="widget">
-		<div id="mapName"></div>
-		by <span id="mapAuthor"></span>
-	</div>
-
 	<div id="spectInfo">
-		<span id="spect" class="textshad">n/a</span>
+		<span id="spect" class="textshad">PB: -:--.---</span>
 	</div>
 
 	<div id="wrInfo" class="widget">
-		<span id="wr">n/a</span>
+		<span id="wr">WR: -:--.--- by N/A</span>
 	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
@@ -74,28 +62,13 @@
 		const socket = io();
 		let records = {};
 
-		socket.on("front.Map", (data) =>{
-			const mapInfo = document.querySelector("#mapInfo");
-			const mapName = document.querySelector("#mapName");
-			const mapAuthor = document.querySelector("#mapAuthor");
-			if (data.name) {
-				mapInfo.style.display = "block";
-				mapName.innerHTML = MPStyle.Parser.toHTML(data.name);
-				mapAuthor.innerHTML = data.author;
-			} else {
-				mapInfo.style.display = "none";
-				mapName.innerHTML = "";
-				mapAuthor.innerHTML = "";
-			}
-		});
-
 		socket.on("front.SpectChange", (player) => {
 			const elem = document.querySelector("#spect");
 			const info = document.querySelector("#spectInfo");
 			let out = "";
 			if (player.nick && player.id != 0) {
 				info.style.display = "block";
-				out = "PB " + player.time;
+				out = "PB: " + player.time;
 			} else {
 				info.style.display = "none";
 			}
@@ -109,7 +82,7 @@
 			for(let i in data) {
 				const record = data[i];
 				if (record.rank == 1) {
-				out = `${record.time}  ${record.nick}`;
+				out = `WR: ${record.time} by ${record.nick}`;
 				break;
 				}
 			}
