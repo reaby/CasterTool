@@ -14,8 +14,8 @@ Local tool for trackmania casters!
 2. run at console: `npm start`
 3. http://localhost:8000/
 
-usually you wish to have Browser source at obs:
-Set the width and height to 1980x1080 and point the url to<br>
+Usually you wish to have Browser source at obs:
+Set the resolution to match your output, eg. 1920x1080 or 1280x720 and the url to<br>
 http://localhost:8000/dashboard
 or<br>
 http://localhost:8000/tmwt<br>
