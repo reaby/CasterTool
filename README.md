@@ -16,9 +16,9 @@ Local tool for trackmania casters!
 
 Usually you wish to have Browser source at obs:
 Set the resolution to match your output, eg. 1920x1080 or 1280x720 and the url to<br>
-http://localhost:8000/dashboard
+http://localhost:8000/game/dashboard
 or<br>
-http://localhost:8000/tmwt<br>
+http://localhost:8000/game/tmwt<br>
 <br>
 There is a route as well to get any map info, send mapUid as parameter<br>
 http://localhost:8000/map?uid=
