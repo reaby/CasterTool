@@ -26,7 +26,7 @@ a {
 }
 
 .card {
-  max-width: 400px;
+  max-width: 300px;
   border: 2px solid #fff;
   object-fit: cover;
 }
@@ -40,5 +40,5 @@ a {
 }
 
 .card {
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.4);
 }

@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import indexRouter from './routes/index.js';
 import gameRouter from './routes/game.js';
+import compRouter from './routes/competition.js';
+
 import config from './config.js';
 import Api from './tmapi/api.js';
 import { Server } from 'socket.io';
@@ -34,8 +36,9 @@ app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(Static('./public'));
 
-app.use('/', indexRouter(tmApi, gbx));
+app.use('/', indexRouter(tmApi));
 app.use('/game', gameRouter(tmApi, gbx));
+app.use('/comp', compRouter(tmApi));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

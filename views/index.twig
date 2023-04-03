@@ -1,14 +1,45 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-  <h1>CasterTool</h1>
-  <p>Welcome to CasterTool</p>
 
-  <ul>
-  <li><a href="/game/dashboard">Show specator widgets</a></li>
-  <li><a href="/game/tmwt">Show TMWT spectator widgets</a></li>
-  <li><a href="/game/top1">Show Current map top 1 time</a></li>
-  <li><a href="/game/top10">Show Current map top 10 leaderboards</a></li>
-  </ul>
+	<div class="container-fluid">
+		<h1 class="textshadow">CasterTool</h1>
+		<p>Welcome to CasterTool</p>
+		<div class="row">
+			<div class="col-md-6">
+				<h2 class="textshadow">Generic Services</h2>
+				<ul>
+					<li>
+						<a href="/map?uid=bqADnHDhKOfimntdyJnyu_ltVhj">Show map statistics</a>, use comma separated list of uid's for multiple</li>
+				</ul>
 
+				<h2 class="mt-6 textshadow">Competition Services</h2>
+				<label for="compId">Competition id</label>
+				<form action="/" method="post">
+					<div class="input-group mb-3">
+						<input id="compId" name="compId" type="text" class="form-control" placeholder="Competition id" aria-label="Competition id" aria-describedby="button-addon2" value="{{competitionId}}">
+						<button class="btn btn-outline-secondary" type="submit" id="button-addon2">Save</button>
+					</div>
+				</form>
+				<ul>
+					<li><a href="/comp/leaderboard">Show Competition leaderboard</a></li>
+				</ul>
+
+
+			</div>
+
+			<div class="col-md-6">
+				<h2 class="textshadow">Game services</h2>
+				<p class="p-leading">
+					These services requires you to have game running on your pc.
+				</p>
+				<ul>
+					<li><a href="/game/dashboard">Show specator widgets</a></li>
+					<li><a href="/game/tmwt">Show TMWT spectator widgets</a></li>
+					<li><a href="/game/top1">Show Current map top 1 time</a></li>
+					<li><a href="/game/top10">Show Current map top 10 leaderboards</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 {% endblock %}

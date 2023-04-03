@@ -1,28 +1,27 @@
 import { Router } from 'express';
 import TrackmaniaApi from '../tmapi/api.js';
-import formatTime from '../utils/time.js'
+import formatTime from '../utils/time.js';
+import settings from '../utils/settings.js';
+
 
 /**
  *
  * @param {TrackmaniaApi} api
  * @returns
  */
-
 export default function (api) {
     const router = Router();
 
-    async function getNames(list) {
-        const namesResult = await api.getDisplayNames(list);
-        const out = {};
-        for (const info of namesResult) {
-          out[info.accountId] = info.displayName;
-        }
-        return out;
-      }
+    router.post('/', async (req, res, next) => {
+      let values = settings.get();
+      values['competitionId']= parseInt(req.body.compId);
+      settings.set(values);
+      res.redirect("/");
+  });
 
 
     router.get('/', async (req, res, next) => {
-        res.render('index', {});
+        res.render('index',  settings.get());
     });
 
 
@@ -41,7 +40,7 @@ export default function (api) {
         return;
       }
 
-      const author = await getNames([map.author]);
+      const author = await api.getNames([map.author]);
       map.authorNick = author[map.author];
       const leaderboard = await api.getMapLeaderboards(mapUid.trim(), 10);
       const compResult = [];
@@ -50,7 +49,7 @@ export default function (api) {
         compResult.push(info);
         fetchNames.push(info.accountId);
       }
-      const names = await getNames(fetchNames);
+      const names = await api.getNames(fetchNames);
       let records = [];
 
       for (const info of compResult) {
@@ -59,10 +58,9 @@ export default function (api) {
       outData.push({map: map, recs: records});
     }
 
-    res.render('map', { mapList: outData });
+    res.render('common/map', { mapList: outData });
   });
 
 
     return router;
-};
-
+}

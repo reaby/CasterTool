@@ -1,6 +1,7 @@
 {
     "env": {
-        "browser": true,
+        "node": true,
+        "browser": false,
         "es2021": true
     },
     "extends": "eslint:recommended",
@@ -9,5 +10,6 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-unused-vars": "off"
     }
 }

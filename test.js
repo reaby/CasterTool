@@ -17,7 +17,7 @@ async function getNames(list) {
 
 
 (async () => {
-    const result = await api.getCompLeaderboard(5108, 100);
+    const result = await api.getCompetitionRounds(5108);
     console.log(result);
 })();
 

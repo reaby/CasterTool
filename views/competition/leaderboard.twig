@@ -1,0 +1,23 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+	<h1 class="textshadow">Leaderboard</h1>
+	<table class="table-responsive table-sm table-borderless textshadow">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Score</th>
+				<th scope="col" class="text-left">Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for rec in data %}
+				<tr>
+					<td>{{rec.rank}}</td>
+					<td class="text-center">{{rec.score}}</td>
+					<td class="text-left">{{rec.name}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

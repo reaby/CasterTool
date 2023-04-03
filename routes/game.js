@@ -6,28 +6,16 @@ import { GbxClient } from '@evotm/gbxclient';
 /**
  *
  * @param {TrackmaniaApi} api
+ * @param {GbxClient} tmclient
  * @returns
  */
 
-export default function (api) {
-  async function getNames(list) {
-    const namesResult = await api.getDisplayNames(list);
-    const out = {};
-    for (const info of namesResult) {
-      out[info.accountId] = info.displayName;
-    }
-    return out;
-  }
-
+export default function (api, tmclient) {
   const router = Router();
 
   router.get('/top10', async (req, res, next) => {
     try {
-      const gbx = new GbxClient();
-      await gbx.connect("127.0.0.1", 5000);
-      await gbx.call("Authenticate", "SuperAdmin", "SuperAdmin");
-      const mapinfo = await gbx.call("GetCurrentMapInfo");
-      await gbx.disconnect();
+      const mapinfo = await tmclient.gbx.call("GetCurrentMapInfo");
 
       const map = await api.getMapInfo(mapinfo.UId);
       if (!map) {
@@ -42,14 +30,14 @@ export default function (api) {
         compResult.push(info);
         fetchNames.push(info.accountId);
       }
-      const names = await getNames(fetchNames);
+      const names = await api.getNames(fetchNames);
       let records = [];
 
       for (const info of compResult) {
         records.push({ rank: info.position, name: names[info.accountId], time: formatTime(info.score) });
       }
 
-      res.render('map', { map: map, recs: records });
+      res.render('common/map', { mapList: [{ map: map, recs: records }] });
     } catch (e) {
       res.end("Couldn't connect local TM instance.");
     }
@@ -57,12 +45,7 @@ export default function (api) {
 
   router.get('/top1', async (req, res, next) => {
     try {
-      const gbx = new GbxClient();
-      await gbx.connect("127.0.0.1", 5000);
-      await gbx.call("Authenticate", "SuperAdmin", "SuperAdmin");
-      const mapinfo = await gbx.call("GetCurrentMapInfo");
-      await gbx.disconnect();
-
+      const mapinfo = await tmclient.gbx.call("GetCurrentMapInfo");
       const map = await api.getMapInfo(mapinfo.UId);
       if (!map) {
         res.end("error.");
@@ -76,27 +59,27 @@ export default function (api) {
         compResult.push(info);
         fetchNames.push(info.accountId);
       }
-      const names = await getNames(fetchNames);
-      let rec = {name: "", time: ""};
+      const names = await api.getNames(fetchNames);
+      let rec = { name: "", time: "" };
 
       for (const info of compResult) {
         rec.name = names[info.accountId];
         rec.time = formatTime(info.score);
       }
 
-      res.render('top1', { map: map, rec: rec });
+      res.render('game/top1', { map: map, rec: rec });
     } catch (e) {
       res.end("Couldn't connect local TM instance.");
     }
   });
 
   router.get('/dashboard', async (req, res, next) => {
-    res.render("dashboard");
+    res.render("game/dashboard");
   });
 
   router.get('/tmwt', async (req, res, next) => {
-    res.render("tmwt");
+    res.render("game/tmwt");
   });
 
   return router;
-};
+}

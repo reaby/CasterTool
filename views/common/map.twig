@@ -1,9 +1,9 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-	<div class="container d-flex align-items-center flex-row flex-grow-1 justify-content-start">
+	<div class="container d-flex align-items-center flex-row flex-grow-1 justify-content-center">
 		{% for data in mapList %}
-			<div class="mx-2 card text-center">
+			<div class="mx-2 card">
 				<h4 class="px-3 textshadow text-left" data-color>{{data.map.name}}</h4>
 				<h4 class="px-3 textshadow text-left">{{data.map.authorNick}}</h4>
 				<img class="card-img" src="{{data.map.thumbnailUrl}}"/>
@@ -13,7 +13,7 @@
 							<tr>
 								<th scope="col">#</th>
 								<th scope="col">Time</th>
-								<th scope="col">Name</th>
+								<th scope="col" class="text-left">Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -21,7 +21,7 @@
 								<tr>
 									<td>{{rec.rank}}</td>
 									<td>{{rec.time}}</td>
-									<td>{{rec.name}}</td>
+									<td class="text-left">{{rec.name}}</td>
 								</tr>
 							{% endfor %}
 						</tbody>

@@ -119,4 +119,28 @@ export default class TrackmaniaApi {
         const token = await this.getToken(AUDIENCE_LIVESERVICES);
         return await this.fetchUrl(`https://live-services.trackmania.nadeo.live/api/token/leaderboard/group/Personal_Best/map/${mapUid}/top?length=${length}&onlyWorld=true&offset=${offset}`, token);
     }
+
+    /**
+     * @param {number} competitionId
+     * @returns
+     * @memberof TrackmaniaApi
+     */
+    async getCompetitionRounds(competitionId) {
+        const token = await this.getToken(AUDIENCE_CLUBSERVICES);
+        return await this.fetchUrl(`https://competition.trackmania.nadeo.club/api/competitions/${competitionId}/rounds`, token);
+    }
+
+    /**
+     *
+     * @param {string[]} list
+     * @returns {string[string]}
+     */
+    async getNames(list) {
+        const namesResult = await this.getDisplayNames(list);
+        const out = {};
+        for (const info of namesResult) {
+            out[info.accountId] = info.displayName;
+        }
+        return out;
+    }
 }

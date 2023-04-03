@@ -19,7 +19,9 @@ export default class XmlRPC {
         this.apicache.spectatorTarget = new Player();
         this.events = events;
         this.map = {};
-        this.connect();
+        this.gbx = null;
+
+//        this.connect();
     }
 
     async sync() {
