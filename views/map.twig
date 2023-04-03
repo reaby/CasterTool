@@ -1,26 +1,33 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-	<div class="container">
-		<img class="img-fluid" src="{{map.thumbnailUrl}}"/>
-		<h2 data-color>{{map.name}}</h2>
-		<table class="table table-sm">
-			<thead>
-				<tr>
-					<th scope="col">#</th>
-					<th scope="col">Time</th>
-					<th scope="col">Name</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for rec in recs %}
-					<tr>
-						<td>{{rec.rank}}</td>
-						<td>{{rec.time}}</td>
-						<td>{{rec.name}}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+	<div class="container d-flex align-items-center flex-row flex-grow-1 justify-content-start">
+		{% for data in mapList %}
+			<div class="mx-2 card text-center">
+				<h4 class="px-3 textshadow text-left" data-color>{{data.map.name}}</h4>
+				<h4 class="px-3 textshadow text-left">{{data.map.authorNick}}</h4>
+				<img class="card-img" src="{{data.map.thumbnailUrl}}"/>
+				<div class="card-body">
+					<table class="table table-sm table-borderless textshadow">
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Time</th>
+								<th scope="col">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for rec in data.recs %}
+								<tr>
+									<td>{{rec.rank}}</td>
+									<td>{{rec.time}}</td>
+									<td>{{rec.name}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
 {% endblock %}

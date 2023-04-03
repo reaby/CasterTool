@@ -28,31 +28,38 @@ export default function (api) {
 
   router.get('/map', async (req, res, next) => {
     if (!req.query["uid"]) {
-      res.end("uid missing.");
+      res.end("query string for '?uid=[mapuid]' is missing.");
       return;
     }
+    const maps = req.query["uid"].split(",");
+    let outData = [];
 
-    const map = await api.getMapInfo(req.query["uid"]);
-    if (!map) {
-      res.end("error.");
-      return;
+    for(const mapUid of maps) {
+      let map = await api.getMapInfo(mapUid.trim());
+      if (!map) {
+        res.end("error.");
+        return;
+      }
+
+      const author = await getNames([map.author]);
+      map.authorNick = author[map.author];
+      const leaderboard = await api.getMapLeaderboards(mapUid.trim(), 10);
+      const compResult = [];
+      const fetchNames = [];
+      for (const info of leaderboard.tops[0].top) {
+        compResult.push(info);
+        fetchNames.push(info.accountId);
+      }
+      const names = await getNames(fetchNames);
+      let records = [];
+
+      for (const info of compResult) {
+        records.push({ rank: info.position, name: names[info.accountId], time: formatTime(info.score) });
+      }
+      outData.push({map: map, recs: records});
     }
 
-    const leaderboard = await api.getMapLeaderboards(req.query["uid"], 10);
-    const compResult = [];
-    const fetchNames = [];
-    for (const info of leaderboard.tops[0].top) {
-      compResult.push(info);
-      fetchNames.push(info.accountId);
-    }
-    const names = await getNames(fetchNames);
-    let records = [];
-
-    for (const info of compResult) {
-      records.push({ rank: info.position, name: names[info.accountId], time: formatTime(info.score) });
-    }
-
-    res.render('map', { map: map, recs: records });
+    res.render('map', { mapList: outData });
   });
 
 

@@ -18,3 +18,27 @@ h3 {
 a {
   color: #00b7ff;
 }
+
+.textshadow {
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000 !important;
+}
+
+.card {
+  max-width: 400px;
+  border: 2px solid #fff;
+  object-fit: cover;
+}
+
+.card img {
+  aspect-ratio: 2/1;
+  object-fit: cover;
+  -o-object-fit: cover;
+  object-position: top;
+  -o-object-position: top;
+}
+
+.card {
+  background: rgba(0,0,0,0.5);
+}
