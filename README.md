@@ -4,7 +4,7 @@ Local tool for trackmania casters!
 # Install
 
 1. Clone repo
-2. copy `config-default.js` to `config.js`
+2. copy `config-default.json` to `config.json`
 3. fill in your ubisoft login infos for accessing trackmania api
 4. run: `npm install`
 
