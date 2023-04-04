@@ -5,19 +5,35 @@
   "scripts": {
     "start": "node ./app.js"
   },
-  "type": "module",
+  "bin": "./app.js",
   "dependencies": {
     "@evotm/gbxclient": "^1.3.0",
-    "chalk": "^5.2.0",
+    "chalk": "4.1.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "^4.18.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^2.6.9",
     "socket.io": "^4.6.1",
-    "supports-color": "^9.3.1",
     "twig": "~0.10.3"
+  },
+  "pkg": {
+    "scripts": [
+      "app.js",
+      "modules/*",
+      "routes/*",
+      "tmapi/*",
+      "utils/*"
+    ],
+    "assets": [
+      "views/**/*",
+      "public/**/*"
+    ],
+    "targets": [
+      "node16-win-x64"
+    ],
+    "outputPath": "dist"
   },
   "devDependencies": {
     "eslint": "^8.36.0"

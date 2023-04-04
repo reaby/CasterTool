@@ -1,8 +1,8 @@
-import { GbxClient } from "@evotm/gbxclient";
-import { LoginToUuid } from "./uuid.js";
-import cli from "../utils/cli.js";
+const { GbxClient } = require('@evotm/gbxclient')
+const { LoginToUuid } = require('./uuid.js')
+const cli = require('../utils/cli.js')
 
-export class Player {
+const Player = exports.Player = class Player {
 
   constructor() {
     this.login = "";
@@ -23,7 +23,7 @@ export class Player {
   }
 }
 
-export default class PlayerManager {
+exports.PlayerManager = class PlayerManager {
   /**
    *
    * @param {GbxClient} gbx
@@ -65,8 +65,8 @@ export default class PlayerManager {
 
   async syncPlayers() {
     this.reset();
-    const players = await this.gbx.call("GetPlayerList", 255,0);
-    for(const i in players) {
+    const players = await this.gbx.call("GetPlayerList", 255, 0);
+    for (const i in players) {
       const player = new Player();
       player.syncFromPlayerInfo(players[i]);
       this.players[player.login] = player;
@@ -75,7 +75,7 @@ export default class PlayerManager {
   }
 
   getPlayerById(id) {
-    for(const i in this.players) {
+    for (const i in this.players) {
       const player = this.players[i];
       if (player.id == id) return player;
     }

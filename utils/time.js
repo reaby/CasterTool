@@ -1,4 +1,4 @@
-export default function formatTime(time, hide_hours_when_zero = true, hide_milliseconds = false) {
+module.exports = function formatTime(time, hide_hours_when_zero = true, hide_milliseconds = false) {
     const get = (number, centi=false) => {
         if (centi) {
             if (number < 100) return "0"+get(number);

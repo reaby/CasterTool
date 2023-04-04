@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import fetch from 'node-fetch';
-import cli from '../utils/cli.js';
-import chalk from 'chalk';
+const fs = require('fs')
+const fetch = require('node-fetch')
+const cli = require('../utils/cli.js')
+const chalk = require('chalk')
 
 const toolName = "CasterTool / petri.jarvisalo@gmail.com";
 const commonHeader = {
@@ -13,7 +13,8 @@ const AUDIENCE_NADEOSERVICES = "NadeoServices";
 const AUDIENCE_LIVESERVICES = "NadeoLiveServices";
 const AUDIENCE_CLUBSERVICES = "NadeoClubServices";
 
-export default class TrackmaniaApi {
+exports.Api = class Api {
+
     constructor(credentials) {
         if (!fs.existsSync("./tokens.json")) {
             fs.writeFileSync("./tokens.json", "{}");
@@ -69,10 +70,10 @@ export default class TrackmaniaApi {
     }
 
     /**
-     * @param {string} mapIdList
-     * @param {string} accountIdList
-     * @returns
-     */
+    * @param {string} mapIdList
+    * @param {string} accountIdList
+    * @returns
+    */
     async getMapRecords(mapIdList, accountIdList) {
         const token = await this.getToken(AUDIENCE_NADEOSERVICES);
         return await this.fetchUrl(`https://prod.trackmania.core.nadeo.online/mapRecords/?accountIdList=${accountIdList}&mapIdList=${mapIdList}`, token);
@@ -89,57 +90,59 @@ export default class TrackmaniaApi {
     }
 
     /**
-     *
-     * @param {string} mapUid
-     * @returns
-     */
+    *
+    * @param {string} mapUid
+    * @returns
+    */
     async getMapInfo(mapUid) {
         const token = await this.getToken(AUDIENCE_LIVESERVICES);
         return await this.fetchUrl(`https://live-services.trackmania.nadeo.live/api/token/map/${mapUid}`, token);
     }
 
     /**
-     *
-     * @param {string[]} list
-     * @returns
-     */
+    *
+    * @param {string[]} list
+    * @returns
+    */
     async getDisplayNames(list = []) {
         const token = await this.getToken(AUDIENCE_NADEOSERVICES);
         return await this.fetchUrl(`https://prod.trackmania.core.nadeo.online/accounts/displayNames/?accountIdList=${list.join(",")}`, token);
     }
 
     /**
-     *
-     * @param {string} mapUid
-     * @param {number} length < 100
-     * @param {number} offset
-     * @returns
-     */
+    *
+    * @param {string} mapUid
+    * @param {number} length < 100
+    * @param {number} offset
+    * @returns
+    */
     async getMapLeaderboards(mapUid, length = 100, offset = 0) {
         const token = await this.getToken(AUDIENCE_LIVESERVICES);
         return await this.fetchUrl(`https://live-services.trackmania.nadeo.live/api/token/leaderboard/group/Personal_Best/map/${mapUid}/top?length=${length}&onlyWorld=true&offset=${offset}`, token);
     }
 
     /**
-     * @param {number} competitionId
-     * @returns
-     * @memberof TrackmaniaApi
-     */
+    * @param {number} competitionId
+    * @returns
+    * @memberof TrackmaniaApi
+    */
     async getCompetitionRounds(competitionId) {
         const token = await this.getToken(AUDIENCE_CLUBSERVICES);
         return await this.fetchUrl(`https://competition.trackmania.nadeo.club/api/competitions/${competitionId}/rounds`, token);
     }
 
     /**
-     *
-     * @param {string[]} list
-     * @returns {string[string]}
-     */
+    *
+    * @param {string[]} list
+    * @returns {string[string]}
+    */
     async getNames(list) {
         const namesResult = await this.getDisplayNames(list);
         const out = {};
-        for (const info of namesResult) {
-            out[info.accountId] = info.displayName;
+        if (namesResult) {
+            for (const info of namesResult) {
+                out[info.accountId] = info.displayName;
+            }
         }
         return out;
     }

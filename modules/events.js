@@ -1,5 +1,5 @@
-import EventEmitter from 'events';
+const EventEmitter = require('events');
 
-export default class Events extends EventEmitter {
+exports.Events = class Events extends EventEmitter {
 
 }

@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import TrackmaniaApi from '../tmapi/api.js';
-import formatTime from '../utils/time.js'
-import { GbxClient } from '@evotm/gbxclient';
-
+const { GbxClient } = require('@evotm/gbxclient');
+const { Router } = require('express')
+const TrackmaniaApi = require('../tmapi/api.js')
+const formatTime = require('../utils/time.js')
+const settings = require('../utils/settings.js')
 /**
  *
  * @param {TrackmaniaApi} api
@@ -10,7 +10,7 @@ import { GbxClient } from '@evotm/gbxclient';
  * @returns
  */
 
-export default function (api, tmclient) {
+module.exports =  function (api, tmclient) {
   const router = Router();
 
   router.get('/top10', async (req, res, next) => {

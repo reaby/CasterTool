@@ -1,13 +1,13 @@
-import { Chalk } from 'chalk';
-import { createSupportsColor } from 'supports-color';
+const chalk = require('chalk');
+//const { createSupportsColor } = require('supports-color');
 
-const stdoutSupportsColor = createSupportsColor(process.stdout);
-const chalk = new Chalk({ level: 1 });
+//const stdoutSupportsColor = createSupportsColor(process.stdout);
 
-export default (text, type = "info", stamp = true) => {
+
+module.exports = (text, type = "info", stamp = true) => {
     let out = "";
     if (stamp) {
-        const date = new Date().toLocaleDateString() +  " " + new Date().toLocaleTimeString();
+        const date = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
         out += chalk.bold.white(date) + ": ";
     }
     if (type) {

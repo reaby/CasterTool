@@ -106,5 +106,7 @@ dist
 
 #Own Additions
 config.js
+config.json
 tokens.json
 settings.json
+dist/

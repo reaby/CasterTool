@@ -1,10 +1,10 @@
-import ApiCache from "../modules/apiCache.js";
-import { Socket } from "socket.io";
-import XmlRPC from "../tmapi/xmlrpc.js";
-import Events from "../modules/events.js";
-import cli from "../utils/cli.js";
+const ApiCache = require('../modules/apiCache.js');
+const { Socket } = require('socket.io');
+const XmlRPC = require('../tmapi/xmlrpc.js');
+const Events = require('../modules/events.js');
+const cli = require('../utils/cli.js');
 
-export default class Websocket {
+exports.Websocket = class Websocket {
     /**
      *
      * @param {XmlRPC} rpc

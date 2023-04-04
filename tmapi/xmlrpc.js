@@ -1,11 +1,11 @@
-import { GbxClient } from '@evotm/gbxclient';
-import cli from '../utils/cli.js';
-import chalk from 'chalk';
-import PlayerManager, { Player } from './playermanager.js';
-import Events from '../modules/events.js';
-import ApiCache, { EmptyMap } from '../modules/apiCache.js';
+const { GbxClient } = require('@evotm/gbxclient');
+const cli = require('../utils/cli.js');
+const chalk = require('chalk');
+const { PlayerManager, Player } = require('./playermanager.js');
+const Events = require('../modules/events.js');
+const { ApiCache, EmptyMap } = require('../modules/apiCache.js');
 
-export default class XmlRPC {
+exports.XmlRPC = class XmlRPC {
 
     /**
     *
@@ -20,8 +20,7 @@ export default class XmlRPC {
         this.events = events;
         this.map = {};
         this.gbx = null;
-
-//        this.connect();
+        this.connect();
     }
 
     async sync() {

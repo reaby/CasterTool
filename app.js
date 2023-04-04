@@ -1,22 +1,28 @@
-import createError from 'http-errors';
-import * as http from 'http';
-import express, { json, urlencoded, static as Static } from 'express';
-import cookieParser from 'cookie-parser';
-import logger from 'morgan';
-import indexRouter from './routes/index.js';
-import gameRouter from './routes/game.js';
-import compRouter from './routes/competition.js';
 
-import config from './config.js';
-import Api from './tmapi/api.js';
-import { Server } from 'socket.io';
-import XmlRPC from './tmapi/xmlrpc.js';
-import cli from './utils/cli.js';
-import ApiCache from './modules/apiCache.js';
-import Websocket from './routes/websocket.js';
-import Events from './modules/events.js';
+const createError = require('http-errors');
+const http = require('http');
+const express = require('express');
+const { json, urlencoded } = require('express');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const indexRouter = require('./routes/index.js');
+const gameRouter = require('./routes/game.js');
+const compRouter = require('./routes/competition.js');
+const { Api } = require('./tmapi/api.js');
+const { Server } = require('socket.io');
+const { XmlRPC } = require('./tmapi/xmlrpc.js');
+const cli = require('./utils/cli.js');
+const ApiCache = require('./modules/apiCache.js');
+const { Websocket } = require('./routes/websocket.js');
+const { Events } = require('./modules/events.js');
+const fs = require('fs');
 
 const app = express();
+const configfile = fs.readFileSync("./config.json");
+const config = JSON.parse(configfile);
+if (!config.user || !config.pass) {
+  process.exit("Config Missing.");
+}
 const credentials = Buffer.from(config.user + ":" + config.pass).toString('base64');
 const tmApi = new Api(credentials);
 const server = http.createServer(app);
@@ -34,7 +40,7 @@ app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(Static('./public'));
+app.use(express.static('./public'));
 
 app.use('/', indexRouter(tmApi));
 app.use('/game', gameRouter(tmApi, gbx));

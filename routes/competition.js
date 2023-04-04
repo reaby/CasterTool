@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import TrackmaniaApi from '../tmapi/api.js';
-import formatTime from '../utils/time.js'
-import settings from '../utils/settings.js';
+const { Router } = require('express')
+const TrackmaniaApi = require('../tmapi/api.js')
+const formatTime = require('../utils/time.js')
+const settings = require('../utils/settings.js')
 
 /**
  *
@@ -9,7 +9,7 @@ import settings from '../utils/settings.js';
  * @returns
  */
 
-export default function (api) {
+module.exports = function (api) {
     const router = Router()
 
     router.get('/leaderboard', async (req, res, next) => {

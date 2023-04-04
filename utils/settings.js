@@ -1,13 +1,9 @@
-import fs from 'fs';
+const fs = require('fs');
 
-export default {
-    settings: {
-        "competitionId": 1
-    },
-
+module.exports = {
     get: () => {
         if (!fs.existsSync("./settings.json")) {
-            fs.writeFileSync("./settings.json", JSON.stringify(this.settings));
+            fs.writeFileSync("./settings.json", JSON.stringify({ "competitionId": 1 }));
         }
         const file = fs.readFileSync("./settings.json");
         return JSON.parse(file);

@@ -1,12 +1,12 @@
-import chalk from "chalk";
-import TrackmaniaApi from "../tmapi/api.js";
-import { Player } from "../tmapi/playermanager.js";
-import cli from "../utils/cli.js";
-import formatTime from "../utils/time.js";
+const chalk = require('chalk');
+const TrackmaniaApi = require('../tmapi/api.js');
+const { Player } = require('../tmapi/playermanager.js');
+const cli = require('../utils/cli.js');
+const formatTime = require('../utils/time.js');
 
-export const EmptyMap = { uid: "", mapId: "", name: "", author: "", thumbnailUrl: "", fileUrl: "" };
+const EmptyMap = exports.EmptyMap = { uid: "", mapId: "", name: "", author: "", thumbnailUrl: "", fileUrl: "" };
 
-export default class ApiCache {
+module.exports = class ApiCache {
     /**
      *
      * @param {TrackmaniaApi} api
