@@ -1,4 +1,4 @@
-
+const version = "0.1.1";
 const createError = require('http-errors');
 const http = require('http');
 const express = require('express');
@@ -17,6 +17,8 @@ const { Websocket } = require('./routes/websocket.js');
 const { Events } = require('./modules/events.js');
 const fs = require('fs');
 
+
+cli(`CasterTool ${version}` , "app")
 const app = express();
 const configfile = fs.readFileSync("./config.json");
 const config = JSON.parse(configfile);
@@ -36,7 +38,7 @@ const webSocket = new Websocket(gbx, cache, io, events);
 // view engine setup
 app.set('views', './views');
 app.set('view engine', 'twig');
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());

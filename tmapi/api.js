@@ -60,7 +60,7 @@ exports.Api = class Api {
 
     async fetchUrl(url, token, method = "GET") {
         const response = await fetch(url, { method: method, headers: { "Authorization": `nadeo_v1 t=${token}` } });
-        cli(url, "ApiFetch");
+        // cli(url, "ApiFetch");
         const json = response.json();
         if (json.code) {
             cli(chalk.bold.red(json.message), "ApiError");
