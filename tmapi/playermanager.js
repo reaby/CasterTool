@@ -2,7 +2,7 @@ const { GbxClient } = require('@evotm/gbxclient')
 const { LoginToUuid } = require('./uuid.js')
 const cli = require('../utils/cli.js')
 
-const Player = exports.Player = class Player {
+class Player {
 
   constructor() {
     this.login = "";
@@ -22,6 +22,7 @@ const Player = exports.Player = class Player {
     this.spectatorTarget = Math.floor(data.SpectatorStatus / 10000);
   }
 }
+exports.Player = Player;
 
 exports.PlayerManager = class PlayerManager {
   /**
