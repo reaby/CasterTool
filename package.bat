@@ -1,1 +1,1 @@
-pkg -C GZip .
+pkg -C GZip package.json

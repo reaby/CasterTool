@@ -16,9 +16,9 @@ const ApiCache = require('./modules/apiCache.js');
 const { Websocket } = require('./routes/websocket.js');
 const { Events } = require('./modules/events.js');
 const fs = require('fs');
+const path = require('path');
 
-
-cli(`CasterTool ${version}` , "app")
+cli(`CasterTool ${version}`, "app")
 const app = express();
 const configfile = fs.readFileSync("./config.json");
 const config = JSON.parse(configfile);
@@ -42,11 +42,11 @@ app.set('view engine', 'twig');
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static('./public'));
-
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter(tmApi));
 app.use('/game', gameRouter(tmApi, gbx));
 app.use('/comp', compRouter(tmApi));
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

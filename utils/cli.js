@@ -8,10 +8,10 @@ module.exports = (text, type = "info", stamp = true) => {
     let out = "";
     if (stamp) {
         const date = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
-        out += chalk.bold.white(date) + ": ";
+        out += chalk.gray(date +" ");
     }
     if (type) {
         out += chalk.bold.green("[") + type + chalk.bold.green("] ")
     }
-    console.log(out + chalk.gray(text));
+    console.log(out + chalk.white(text));
 };

@@ -28,7 +28,8 @@
     ],
     "assets": [
       "views/**/*",
-      "public/**/*"
+      "public/**/*",
+      "node_modules/socket.io/client-dist/*.js"
     ],
     "targets": [
       "node16-win-x64"
